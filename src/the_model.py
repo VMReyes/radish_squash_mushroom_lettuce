@@ -17,7 +17,7 @@ def get_latest_features(feature_set, target_set):
     #latest_feature_set["%s price" % target_item] = latest_target_item_price
     pass
 
-GET_NEW_DATA = True
+GET_NEW_DATA = True #get the newest data from the Wiki
 
 if GET_NEW_DATA:
     print("Getting dataframes from internet...")
@@ -38,7 +38,9 @@ if GET_NEW_DATA:
 
     feature_set, target_set = randomize_sets(feature_set, target_set)
 else:
-    feature_set, target_set = load_saved_sets()
+    feature_set, target_set = load_saved_sets() #TODO: right now, we can't get saved data b/c we wouldn't be able to easily get
+                                                #      the latest feature-set to make a prediction (we should pickle the latest
+                                                #      feature set too...
 
 ###MERGING FEATURE DATAFRAMES MAY CAUSE DATE ERRORS, CHECK THIS
 

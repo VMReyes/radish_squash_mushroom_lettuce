@@ -4,7 +4,6 @@ import datetime
 import pandas as pd
 import dateutil.parser
 import numpy as np
-from keras.utils import to_categorical
 
 def merge_feature_dataframes(dataframes):
     feature_set = dataframes[0]

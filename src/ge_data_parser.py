@@ -233,14 +233,6 @@ def load_saved_sets():
     returns pickled feature and target sets in a 2 element array
     """
     return [pd.read_pickle("feature_set.panda"), pd.read_pickle("target_set.panda")]
-#off track, let's do some correlation analysis
-
-#feature_set_2 = feature_set.merge(target_item_name_dataframe[ ["%s trend" % target_item_name, "%s price" % target_item_name ,"date"] ], on="date")[:-1:]
-#print(feature_set_2.corr())
-
-
-#dont'r remove date for now.. feature_set = feature_set.drop(columns="date")
-
 
 
 

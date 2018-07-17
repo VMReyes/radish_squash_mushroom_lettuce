@@ -1,4 +1,4 @@
-# radish_squah_mushroom_lettuce
+# radish_squash_mushroom_lettuce
 An attempt to predict price changes in Runescape using Machine Learning.
 
 I've written a parser for Runesape Wiki GE item price data.

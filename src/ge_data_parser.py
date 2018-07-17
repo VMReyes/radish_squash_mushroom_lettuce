@@ -6,9 +6,6 @@ import dateutil.parser
 import numpy as np
 from keras.utils import to_categorical
 
-
-
-
 def merge_feature_dataframes(dataframes):
     feature_set = dataframes[0]
     for feat in dataframes[1::]:
@@ -16,8 +13,6 @@ def merge_feature_dataframes(dataframes):
     #feature_set = feature_set.align(feat)
     return feature_set
     
-    
-
 class Wiki_GE_Parser:
     
     def __init__(self, item_name):
@@ -25,6 +20,10 @@ class Wiki_GE_Parser:
         self.data = None
 
     def get_data(self):
+        """
+        renames the price feature to include the item's name
+        returns the dataframe saved in the parser
+        """
         self.data["%s price" % self.item_name] = self.data["price"]
         self.data = self.data.drop("price", axis=1)
         return self.data
@@ -102,6 +101,12 @@ class Wiki_GE_Parser:
         self.data["%s trend" % self.item_name] = pd.Series(trend_series)
     
     def parse_ge_data_string(self, data_string):
+        """
+        inputs: string in the form " 'date:price[:volume_data]' "
+        we do not use volume data currently, so we cut it off
+
+        returns: tuple in the form of (date_integer, weekday from 0 to 6, price)
+        """
         if data_string.count(":") > 1:  # deals with some data having volume data (we cut it off)
             colon2_index = self.find_second_colon_index(data_string)
             data_string = data_string[1:colon2_index:]   #removes the first quotation mark

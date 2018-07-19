@@ -10,7 +10,9 @@ from keras.layers import Dense, Activation
 import numpy as np
 from ge_data_parser import *
 
+#TODO: turn these constants into arguments
 TARGET_ITEM = "Saradomin_brew_(4)"
+FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Wine_of_Saradomin", "Vial_of_water", "Rocktail", "Toadflax_potion_(unf)"]
 
 def get_latest_features(feature_set, target_set):
     #last_feature_set = feature_set.iloc[-1]
@@ -21,7 +23,7 @@ GET_NEW_DATA = True #get the newest data from the Wiki
 
 if GET_NEW_DATA:
     print("Getting dataframes from internet...")
-    feature_set, target_set = create_dataframes("Saradomin_brew_(4)", ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Wine_of_Saradomin", "Vial_of_water", "Rocktail", "Toadflax_potion_(unf)"])
+    feature_set, target_set = create_dataframes(TARGET_ITEM, FEATURE_ITEMS) 
 
     print("Aligning dataframes by date...")
     feature_set, target_set = align_sets_by_date(feature_set, target_set)

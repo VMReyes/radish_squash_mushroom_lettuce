@@ -79,6 +79,7 @@ class Wiki_GE_Parser:
         creates a trend column (item_type chooses if its a future trend or past trend)
         item_type: "feature item" - trend column shows the price change to the current timestamp
                    "target item" - trend column shows the upcoming price change from the current timestamp
+        returns: Nothing, just modifies data within the parser to include a new feature 
         """
         trend_series = []
         previous_price = None
@@ -120,6 +121,9 @@ class Wiki_GE_Parser:
         return (date, weekday, price)
     
     def find_second_colon_index(self, data_string):
+        """
+        returns the index of the second colon in data_string
+        """
         count = 0
         for i in range(len(data_string)):
             if data_string[i] == ':':

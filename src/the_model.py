@@ -8,11 +8,13 @@ import dateutil.parser
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
+import math
 from ge_data_parser import *
 
 #TODO: turn these constants into arguments
 TARGET_ITEM = "Saradomin_brew_(4)"
-FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Wine_of_Saradomin", "Vial_of_water", "Rocktail", "Toadflax_potion_(unf)"]
+FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Toadflax_potion_(unf)"]
+BATCH_SIZE = 64
 
 def get_latest_features(feature_set, target_set):
     #last_feature_set = feature_set.iloc[-1]
@@ -56,23 +58,33 @@ testing_target_set = target_set[int(data_length/2)::]
 num_features = len(list(training_feature_set.columns.values))
 
 model = Sequential()
-model.add(Dense(num_features, input_dim=num_features))
+model.add(Dense(1024, input_dim=num_features))
 model.add(Activation('relu'))
-for i in range(num_features-1,1,-1):
-    model.add(Dense(i))
-    model.add(Activation('relu'))
+model.add(Dense(512))
+model.add(Activation('relu'))
+model.add(Dense(256))
+model.add(Activation('relu'))
+model.add(Dense(128))
+model.add(Activation('relu'))
+#for i in range(num_features-1,1,-1):
+ #   model.add(Dense(i))
+  #  model.add(Activation('relu'))
 model.add(Dense(1))
 
 model.compile(optimizer='Adam',
               loss='mse')
 
 print(training_feature_set.tail())
-model.fit(training_feature_set, training_target_set, epochs=25, batch_size=1)
+model.fit(training_feature_set, training_target_set, epochs=30, batch_size=BATCH_SIZE)
+testing_loss = float(model.evaluate(testing_feature_set, testing_target_set, batch_size=1))
+print("our testing data rmse was: %f" %  (math.sqrt(testing_loss)) )
 
-print(model.evaluate(testing_feature_set, testing_target_set, batch_size=1))
+print(testing_target_set.describe())
 
-#plt.plot(model.predict(testing_feature_set))
-#plt.plot(testing_target_set)
-#plt.show()
+plt.scatter(list(range(0, len(testing_feature_set))) , model.predict(testing_feature_set))
+plt.scatter(list(range(0, len(testing_feature_set))) , testing_target_set)
+plt.show()
+latest_features = np.resize(latest_features, (1, num_features))
+print("These are our latest features...")
 print(latest_features)
 print("we predict %s will change by this much %f" % (TARGET_ITEM, model.predict(latest_features)))

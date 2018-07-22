@@ -15,8 +15,9 @@ from ge_data_parser import *
 TARGET_ITEM = "Saradomin_brew_(4)"
 FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Toadflax_potion_(unf)"]
 selected_features = ["price", "trend"]
+MAKE_BATCH_SIZE_LENGTH_OF_DATA = True
 BATCH_SIZE = 1
-EPOCHS = 50
+EPOCHS = 80
 
 GET_NEW_DATA = False #get the newest data from the Wiki
 
@@ -50,6 +51,7 @@ selected_features_array = create_selected_features(FEATURE_ITEMS, selected_featu
 feature_set = feature_set[selected_features_array]
 
 data_length = len(feature_set)
+
 training_feature_set = feature_set[:int(data_length/2):]
 training_target_set = target_set[:int(data_length/2):]
 
@@ -78,6 +80,10 @@ model.compile(optimizer='Adam',
             loss='mse')
 
 print(training_feature_set.tail())
+
+if MAKE_BATCH_SIZE_LENGTH_OF_DATA:
+    BATCH_SIZE = data_length
+
 model.fit(training_feature_set, training_target_set, epochs=EPOCHS, batch_size=BATCH_SIZE)
 testing_loss = float(model.evaluate(testing_feature_set, testing_target_set, batch_size=1))
 print("our testing data rmse was: %f" %  (math.sqrt(testing_loss)) )

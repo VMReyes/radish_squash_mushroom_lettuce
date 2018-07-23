@@ -44,7 +44,8 @@ else:
     feature_set = pd.read_pickle("fs.panda")
     target_set = pd.read_pickle("ts.panda")
     latest_features = pd.read_pickle("lf.panda")
-    feature_set, target_set = randomize_sets(feature_set, target_set)
+    
+feature_set, target_set = randomize_sets(feature_set, target_set)
 
 selected_features_array = create_selected_features(FEATURE_ITEMS, selected_features)
 

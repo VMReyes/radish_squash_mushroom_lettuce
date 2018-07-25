@@ -15,11 +15,12 @@ from ge_data_parser import *
 TARGET_ITEM = "Saradomin_brew_(4)"
 FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Toadflax_potion_(unf)"]
 selected_features = ["price", "trend"]
-MAKE_BATCH_SIZE_LENGTH_OF_DATA = True
-BATCH_SIZE = 1
+MAKE_BATCH_SIZE_LENGTH_OF_DATA = False
+DEBUG_GRAPH = True
+BATCH_SIZE = 1000
 EPOCHS = 80
 
-GET_NEW_DATA = False #get the newest data from the Wiki
+GET_NEW_DATA = True #get the newest data from the Wiki
 
 if GET_NEW_DATA:
     print("Getting dataframes from internet...")
@@ -63,13 +64,13 @@ num_features = len(list(training_feature_set.columns.values))
 
 model = Sequential()
 
-model.add(Dense(num_features+1, input_dim=num_features))
+model.add(Dense(num_features, input_dim=num_features))
 model.add(Activation('relu'))
 
 # https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw
 # used formula from comment 2 
 alpha = 5 # usually 2-10
-hidden_layer_neurons = int(data_length / (alpha * (1 + num_features+1)))
+hidden_layer_neurons = int(data_length / (alpha * (1 + num_features)))
 print("[+] The model has %i neurons in its hidden layer." % hidden_layer_neurons)
 model.add(Dense(hidden_layer_neurons))
 model.add(Activation('relu'))
@@ -93,9 +94,11 @@ print("the testing data std was: %f" % testing_target_set.std())
 
 print("Our model scored an rmse of %f above (or below) the std. " % (math.sqrt(testing_loss) - testing_target_set.std() ))
 
-plt.scatter(list(range(0, len(testing_feature_set))) , model.predict(testing_feature_set))
-plt.scatter(list(range(0, len(testing_feature_set))) , testing_target_set)
-plt.show()
+if DEBUG_GRAPH:
+    plt.scatter(list(range(0, len(testing_feature_set))) , model.predict(testing_feature_set))
+    plt.scatter(list(range(0, len(testing_feature_set))) , testing_target_set)
+    plt.show()
+    
 latest_features = np.resize(latest_features[selected_features_array], (1, num_features))
 print("These are our latest features...")
 print(latest_features)

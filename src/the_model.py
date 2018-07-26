@@ -17,7 +17,7 @@ FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_rest
 selected_features = ["price", "trend"]
 MAKE_BATCH_SIZE_LENGTH_OF_DATA = False
 DEBUG_GRAPH = True
-BATCH_SIZE = 1000
+BATCH_SIZE = 32
 EPOCHS = 80
 
 GET_NEW_DATA = True #get the newest data from the Wiki

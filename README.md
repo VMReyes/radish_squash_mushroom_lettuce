@@ -7,3 +7,7 @@ Then, we train a model on the data and evaluate it.
 
 Currently, I've attempted to predict the next price change for saradomin brew (4).
 My RMSE is currently around 2.48 percentage points.
+
+I am real world testing the model by buying and selling according to its predictions.
+
+Check out the rs_ml paper to find out how the model works.

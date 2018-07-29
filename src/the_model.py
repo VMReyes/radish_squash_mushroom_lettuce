@@ -21,7 +21,7 @@ selected_features = ["price", "trend"]
 MAKE_BATCH_SIZE_LENGTH_OF_DATA = False
 DEBUG_GRAPH = False
 BATCH_SIZE = 32
-EPOCHS = 80
+EPOCHS = 40
 
 GET_NEW_DATA = True #get the newest data from the Wiki
 
@@ -57,7 +57,9 @@ else:
 
 feature_set, target_set = randomize_sets(feature_set, target_set)
 
-selected_features_array = create_selected_features(FEATURE_ITEMS, TARGET_ITEM, selected_features)
+selected_features_array = create_selected_features(FEATURE_ITEMS, \
+                                                   TARGET_ITEM,   \
+                                                   selected_features)
 
 feature_set = feature_set[selected_features_array]
 latest_features = latest_features[selected_features_array]
@@ -97,6 +99,8 @@ model.fit(training_feature_set, training_target_set, epochs=EPOCHS, batch_size=B
 
 print("\n[+] Evaluating the model.")
 testing_loss = float(model.evaluate(testing_feature_set, testing_target_set, batch_size=1))
+
+print("\n[!] Our testing data mse was: %f" % testing_loss)
 
 print("[!] Our testing data rmse was: %f" %  (math.sqrt(testing_loss)) )
 

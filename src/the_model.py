@@ -13,7 +13,10 @@ from ge_data_parser import *
 
 #TODO: turn these constants into arguments
 TARGET_ITEM = "Saradomin_brew_(4)"
-FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", "Super_restore_(4)", "Toadflax_potion_(unf)"]
+FEATURE_ITEMS = ["Grimy_toadflax", "Crushed_nest", "Clean_toadflax", \
+                 "Super_restore_(4)", "Toadflax_potion_(unf)", \
+                 "Rocktail", "Saradomin_brew_flask_(6)", "Shark", \
+                 "Mahogany_plank"]
 selected_features = ["price", "trend"]
 MAKE_BATCH_SIZE_LENGTH_OF_DATA = False
 DEBUG_GRAPH = True

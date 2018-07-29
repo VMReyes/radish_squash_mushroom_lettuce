@@ -13,9 +13,6 @@ def merge_feature_dataframes(dataframes):
         #      It would be smart to make sure we are merging the right dates correctly.
         feature_set, feat = align_sets_by_date(feature_set, feat) 
         feature_set = feature_set.merge(feat.drop(columns=["week_day_0", "week_day_1", "week_day_2", "week_day_3", "week_day_4", "week_day_5", "week_day_6"]), on="date")
-        #print("[!] newest feature_set")
-        #print(feature_set)
-    #feature_set = feature_set.align(feat)
     return feature_set
     
 class Wiki_GE_Parser:

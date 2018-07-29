@@ -7,11 +7,14 @@ import numpy as np
 
 def merge_feature_dataframes(dataframes):
     feature_set = dataframes[0]
+    print("[+] Merging feature item dataframes...")
     for feat in dataframes[1::]:
         #TODO: Merging dataframes may be problematic if they do not share identical date sequences. Look further into this.
         #      It would be smart to make sure we are merging the right dates correctly.
         feature_set, feat = align_sets_by_date(feature_set, feat) 
         feature_set = feature_set.merge(feat.drop(columns=["week_day_0", "week_day_1", "week_day_2", "week_day_3", "week_day_4", "week_day_5", "week_day_6"]), on="date")
+        #print("[!] newest feature_set")
+        #print(feature_set)
     #feature_set = feature_set.align(feat)
     return feature_set
     
@@ -140,7 +143,7 @@ class Wiki_GE_Parser:
         """
         return( (cur_price-previous_price)/previous_price*100 )
 
-def create_selected_features(feature_item_names, selected_features):
+def create_selected_features(feature_item_names, target_item_name, selected_features):
     """
     takes arrays of feature item names and selected features
     returns an array of features that match the item names
@@ -150,7 +153,7 @@ def create_selected_features(feature_item_names, selected_features):
     for item_name in feature_item_names:
         for feature in selected_features:
             ret_features.append("%s %s" % (item_name, feature) )
-    print(ret_features)
+    ret_features.append("%s price" % (target_item_name))
     return ret_features
     
 def create_dataframes(target_item_name, feature_item_names):
@@ -175,7 +178,9 @@ def create_dataframes(target_item_name, feature_item_names):
         feature_item_dataframes.append(a.get_data())
 
     feature_set = merge_feature_dataframes(feature_item_dataframes)
-    feature_set = feature_set.merge(target_item_name_dataframe[ ["%s price" % target_item_name ,"date"] ], on="date")[:-1:] #adds target_item price's feature
+    feature_set = feature_set.merge(target_item_name_dataframe[ ["%s price" % target_item_name ,"date"] ], on="date") #adds target_item price's feature
+
+
 
     target_set = target_item_name_dataframe[["%s trend" % target_item_name,"date"]][:-1:]
 
@@ -187,33 +192,43 @@ def align_sets_by_date(feature_set, target_set):
     aligns feature and target sets by date by removing mismatched dates
     returns: array with [target_set, feature_set]
     """
+    #print("[!] Inputs:")
+    #print(feature_set, target_set)
     switches = 1
-    last_index = 0
+    last_index = -1
     tot_switch = 0
+    #print("len of feature set: %i, len of target set: %i" % (len(feature_set), len(target_set)))
+    #print(feature_set)
     while switches:
-        for index in range(last_index,len(feature_set["date"])):
-            #print(index)
+        for index in range(last_index, -1 * min(len(feature_set),len(target_set)), -1):
             switches = 0
-            #print(target_set.iloc[[index]]["date"])
-        #print(row["date"], target_set["date"][index])
-        #print(index, target_set.size)
-        #print(target_set["date"].tail())
-            if dateutil.parser.parse( feature_set.iloc[index]["date"] ) > dateutil.parser.parse(target_set.iloc[index]["date"]):
+            if dateutil.parser.parse( feature_set.iloc[index]["date"] ) < dateutil.parser.parse(target_set.iloc[index]["date"]):
                 target_set = target_set.drop(target_set.index[index])
                 target_set.index = range(len(target_set))
                 switches = 1
                 tot_switch += 1
                 last_index = index
                 break
-            elif dateutil.parser.parse( feature_set.iloc[index]["date"] ) < dateutil.parser.parse(target_set["date"][index]):
+            elif dateutil.parser.parse( feature_set.iloc[index]["date"] ) > dateutil.parser.parse(target_set.iloc[index]["date"]):
                 feature_set = feature_set.drop(feature_set.index[index])
                 feature_set.index = range(len(feature_set))
-                las_index=index
+                last_index=index
                 switches = 1
                 tot_switch += 1
                 break
             #print(feature_set["date"][index-3:index+1:1], target_set["date"][index-3:index+1:1])
-    print("we switched %i times" % tot_switch)
+    #print("we switched %i times" % tot_switch)
+    #print("new lengths %i %i" % (len(feature_set), len(target_set)))
+
+    if len(feature_set) > len(target_set):
+        feature_set = feature_set.iloc[len(feature_set) - len(target_set):len(feature_set):]
+        feature_set.index = range(len(feature_set))
+    elif len(feature_set) < len(target_set):
+        target_set = target_set.iloc[len(target_set)- len(feature_set):len(target_set):]
+        target_set.index = range(len(target_set))
+    #feature_set = feature_set.iloc[0:min(len(feature_set),len(target_set)):]
+    #target_set = target_set.iloc[0:len(feature_set):]
+    
     return [feature_set, target_set]
 
 def randomize_sets(feature_set, target_set):

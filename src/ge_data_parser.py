@@ -5,6 +5,8 @@ import pandas as pd
 import dateutil.parser
 import numpy as np
 
+RS3 = False
+
 def merge_feature_dataframes(dataframes):
     feature_set = dataframes[0]
     print("[+] Merging feature item dataframes...")
@@ -41,7 +43,10 @@ class Wiki_GE_Parser:
         if self.item_name == None:
             print("You haven't set an item name yet!")
             return 0
-        wiki_page = "http://runescape.wikia.com/wiki/Module:Exchange/%s/Data" % self.item_name
+        if RS3:
+            wiki_page = "http://runescape.wikia.com/wiki/Module:Exchange/%s/Data" % self.item_name
+        else:
+            wiki_page = "https://oldschoolrunescape.wikia.com/wiki/Module:Exchange/%s/Data" % self.item_name
         print("accessing %s..." %wiki_page)
         page = urlopen(wiki_page)
         ge_soup = BeautifulSoup(page, 'html.parser')

@@ -5,28 +5,31 @@ import pandas as pd
 import dateutil.parser
 import numpy as np
 
-RS3 = False
+RS3 = False # Currently, does not work TODO
 
 def merge_feature_dataframes(dataframes):
     feature_set = dataframes[0]
     print("[+] Merging feature item dataframes...")
     for feat in dataframes[1::]:
-        #TODO: Merging dataframes may be problematic if they do not share identical date sequences. Look further into this.
+        #TODO: Merging dataframes may be problematic if they do not share \
+        #      identical date sequences. Look further into this.
         #      It would be smart to make sure we are merging the right dates correctly.
-        feature_set, feat = align_sets_by_date(feature_set, feat) 
+        feature_set, feat = align_sets_by_date(feature_set, feat)
         feature_set = feature_set.merge(feat.drop(columns=["week_day_0", "week_day_1", "week_day_2", "week_day_3", "week_day_4", "week_day_5", "week_day_6"]), on="date")
     return feature_set
-    
+
 class Wiki_GE_Parser:
-    
+
     def __init__(self, item_name):
         self.item_name = item_name
         self.data = None
 
     def get_data(self):
         """
+        inputs: none
+
         renames the price feature to include the item's name
-        returns the dataframe saved in the parser
+        returns: the dataframe saved in the parser
         """
         self.data["%s price" % self.item_name] = self.data["price"]
         self.data = self.data.drop("price", axis=1)
@@ -34,12 +37,14 @@ class Wiki_GE_Parser:
 
     def grab_data_from_wiki(self):
         """
+        inputs: none
+
         retrieves price data from wiki page and saves it
         as an array of string data in the form of "date:price"
 
         returns: 1 if successful, 0 otherwise
         """
-        
+
         if self.item_name == None:
             print("You haven't set an item name yet!")
             return 0
@@ -52,7 +57,7 @@ class Wiki_GE_Parser:
         ge_soup = BeautifulSoup(page, 'html.parser')
         self.data = ge_soup.find_all(attrs={'class':'st0'})
         return 1
-        
+
     def convert_data_to_dataframe(self):
         """
         converts ge data from scraper to a dataframe with the form of [weekday, price]
@@ -76,16 +81,16 @@ class Wiki_GE_Parser:
             weekday_series.append(weekday)
             price_series.append(price/10000)
         print("we skipped %i entries because they shared the same date" % skipped)
-        
+
         self.data = pd.DataFrame({"price":pd.Series(price_series),
                                   "date":pd.Series(date_series)}).join(pd.get_dummies(pd.Series(weekday_series), prefix="week_day"))
-    
+
     def create_trend_column(self, item_type):
         """
         creates a trend column (item_type chooses if its a future trend or past trend)
         item_type: "feature item" - trend column shows the price change to the current timestamp
                    "target item" - trend column shows the upcoming price change from the current timestamp
-        returns: Nothing, just modifies data within the parser to include a new feature 
+        returns: Nothing, just modifies data within the parser to include a new feature
         """
         trend_series = []
         previous_price = None
@@ -97,17 +102,17 @@ class Wiki_GE_Parser:
                     delta = self.prices_to_percentage_delta(row["price"], self.data["price"][index + 1])
                     trend_series.append(delta)
                 except:
-                    
+
                     pass
-            
+
             if item_type == "feature item" and previous_price:
                 trend_series.append(self.prices_to_percentage_delta(previous_price, row["price"]))
 
 
             previous_price = row["price"]
-        
+
         self.data["%s trend" % self.item_name] = pd.Series(trend_series)
-    
+
     def parse_ge_data_string(self, data_string):
         """
         inputs: string in the form " 'date:price[:volume_data]' "
@@ -125,7 +130,7 @@ class Wiki_GE_Parser:
         weekday = int(datetime.datetime.fromtimestamp(date).weekday())
         price = int(data_string[colon_index+1:len(data_string):])
         return (date, weekday, price)
-    
+
     def find_second_colon_index(self, data_string):
         """
         returns the index of the second colon in data_string
@@ -157,7 +162,7 @@ def create_selected_features(feature_item_names, target_item_name, selected_feat
             ret_features.append("%s %s" % (item_name, feature) )
     ret_features.append("%s price" % (target_item_name))
     return ret_features
-    
+
 def create_dataframes(target_item_name, feature_item_names):
     """
     returns an array with two elements,
@@ -230,7 +235,7 @@ def align_sets_by_date(feature_set, target_set):
         target_set.index = range(len(target_set))
     #feature_set = feature_set.iloc[0:min(len(feature_set),len(target_set)):]
     #target_set = target_set.iloc[0:len(feature_set):]
-    
+
     return [feature_set, target_set]
 
 def randomize_sets(feature_set, target_set):

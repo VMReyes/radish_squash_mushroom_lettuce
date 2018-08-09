@@ -13,9 +13,12 @@ def merge_feature_dataframes(dataframes):
     for feat in dataframes[1::]:
         #TODO: Merging dataframes may be problematic if they do not share \
         #      identical date sequences. Look further into this.
-        #      It would be smart to make sure we are merging the right dates correctly.
+        #      It would be smart to make sure we are merging the right dates \
+        #      correctly.
         feature_set, feat = align_sets_by_date(feature_set, feat)
-        feature_set = feature_set.merge(feat.drop(columns=["week_day_0", "week_day_1", "week_day_2", "week_day_3", "week_day_4", "week_day_5", "week_day_6"]), on="date")
+        feature_set = feature_set.merge(feat.drop(columns=[
+            "week_day_0", "week_day_1", "week_day_2", "week_day_3", "week_day_4", \
+            "week_day_5", "week_day_6"]), on="date")
     return feature_set
 
 class Wiki_GE_Parser:
@@ -48,10 +51,15 @@ class Wiki_GE_Parser:
         if self.item_name == None:
             print("You haven't set an item name yet!")
             return 0
+
         if RS3:
-            wiki_page = "http://runescape.wikia.com/wiki/Module:Exchange/%s/Data" % self.item_name
+            wiki_page = \
+            "http://runescape.wikia.com/wiki/Module:Exchange/%s/Data" \
+            % self.item_name
         else:
-            wiki_page = "https://oldschoolrunescape.wikia.com/wiki/Module:Exchange/%s/Data" % self.item_name
+            wiki_page = \
+            "https://oldschoolrunescape.wikia.com/wiki/Module:Exchange/%s/Data" \
+            % self.item_name
         print("accessing %s..." %wiki_page)
         page = urlopen(wiki_page)
         ge_soup = BeautifulSoup(page, 'html.parser')
@@ -60,8 +68,9 @@ class Wiki_GE_Parser:
 
     def convert_data_to_dataframe(self):
         """
-        converts ge data from scraper to a dataframe with the form of [weekday, price]
-        also, the dataframe removes consecutive data points with the same weekday
+        converts ge data from scraper to a dataframe with the form of
+        [weekday, price] also, the dataframe removes consecutive data points
+        with the same weekday
         """
         ge_data = self.data
 

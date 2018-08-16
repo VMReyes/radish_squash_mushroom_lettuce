@@ -8,6 +8,15 @@ import numpy as np
 RS3 = False # Currently, does not work TODO
 
 def merge_feature_dataframes(dataframes):
+    """
+    Merges features dataframes into one large dataframe.
+
+    Iterates through a list of dataframes and merges them according to date.
+
+    dataframes: a list of feature item dataframes
+
+    returns: a dataframe containing all the feature item data
+    """
     feature_set = dataframes[0]
     print("[+] Merging feature item dataframes...")
     for feat in dataframes[1::]:

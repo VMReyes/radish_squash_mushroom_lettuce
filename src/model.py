@@ -16,6 +16,8 @@ class ge_predictor:
     def __init__(self):
         """
         Initializes the model with empty values.
+
+        We set every value we are going to use to 0.
         """
         self.model = None
         self.training_features = None
@@ -27,8 +29,12 @@ class ge_predictor:
     def set_data(self, training_features, training_targets, testing_features, \
                  testing_targets):
         """
+        Stores input data into the ge_predictor.
+
+        This method takes in data in the form of dataframes. With a grand total
+        of four, we take in 2 for each data set (training and testing).
+
         Input: training and testing features in the form of dataframes.
-        Set the data for model and store it.
         """
         self.training_features = training_features
         self.training_targets = training_targets

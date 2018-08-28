@@ -5,8 +5,7 @@ import pandas as pd
 import dateutil.parser
 import numpy as np
 
-RS3 = False # Currently, does not work TODO
-
+RS3 = True # old school does not work atm
 def merge_feature_dataframes(dataframes):
     """
     Merges features dataframes into one large dataframe.
